@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Poster Service</title>
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background-image: url('background.jpeg');
+            margin: 0;
+            padding: 0;
+            color: #413939;
+        }
+        header {
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        main {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f1f1f1;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        form input, form select, form textarea, form button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: 'Comic Sans MS', sans-serif;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        form button {
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        form button:hover {
+            background: linear-gradient(45deg, #FFA500, #552900);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .back-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CV Poster Request</h1>
+    </header>
+    <main>
+        <button class="back-btn" onclick="window.history.back()">⬅ Back</button>
+        <form id="serviceForm" data-service="CV Poster">
+            <input type="text" id="fullName" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone" placeholder="Phone Number" required>
+            <textarea id="education" placeholder="Education Details" required></textarea>
+            <textarea id="experience" placeholder="Experience Details" required></textarea>
+            <textarea id="skills" placeholder="Skills" required></textarea>
+            <label for="cvFile">📄 Upload Your CV Document:</label>
+            <input type="file" id="cvFile" accept=".pdf,.doc,.docx" required>
+            <label for="receivingMethod">Receiving Method:</label>
+            <select id="receivingMethod" required>
+                <option value="">-- Select --</option>
+                <option value="Online">Online & Delivery</option>
+                <option value="Contact">Contact & Collect</option>
+            </select>
+            <input type="text" id="contact" placeholder="Your Contact number">
+            <button type="submit">📤 Submit CV Poster Request</button>
+        </form>
+    </main>
+    <script type="module">
+
+    // supabase connection details
+  const { createClient } = supabase;
+  const supabaseUrl = 'https://gtbqbfqvpzdshswaivne.supabase.co'; 
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0YnFiZnF2cHpkc2hzd2Fpdm5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzUxOTcsImV4cCI6MjA3NTI1MTE5N30.0IaZbc30TpwNs6hzKo4LC6XcchzAYk222yUh2PZEmuY';
+  const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+  const form = document.getElementById('serviceForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+      // data which is going to be stored
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phoneNumber = document.getElementById("phone").value.trim();
+    const education = document.getElementById("education").value;
+    const experience = document.getElementById("experience").value;
+    const skills = document.getElementById("skills").value;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from('CVTable')
+        .insert([
+          { FullName: fullName, email: email, phoneNumber: phoneNumber, educationDetails: education, Experience: experience, Skill: skills }
+        ]);
+
+      if (error) {
+        alert('Error: ' + error.message);
+      } else {
+        alert('Request successful!');
+       
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Unexpected error occurred.');
+    }
+  });
+    </script>
+
+
+
+ </body>   
+</html>

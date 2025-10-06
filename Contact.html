@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - TakeItEasy Internet Cafe</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background.jpeg');
+            color: #413939;
+        }
+        header {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            padding: 20px;
+            text-align: right;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        header a:hover {
+            color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            color: #552900;
+        }
+        .contact-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        /* Contact form */
+        .contact-form {
+            flex: 1;
+            background: #f1f1f1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .contact-form input, .contact-form textarea {
+            font-family: 'Comic Sans MS', sans-serif;
+            display: block;
+            width: 95%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .contact-form textarea {
+            resize: none;
+        }
+        .contact-form button {
+            font-family: 'Comic Sans MS', sans-serif;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .contact-form button:hover {
+            background: linear-gradient(45deg, #FFA500, #552900);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        /* Contact details */
+        .contact-info {
+            flex: 1;
+            background: #f1f1f1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .contact-info h2 {
+            margin-bottom: 15px;
+            color: #552900;
+        }
+        .contact-info p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        /* Social media */
+        .socials {
+            margin-top: 15px;
+        }
+        .socials a {
+            margin: 0 10px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .socials a:hover {
+            transform: scale(1.1);
+        }
+        .socials img {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html">🏠 Home</a>
+        <a href="customerLogin.html">🔑 Login/SignUp</a>
+        <a href="Services.html">💻 Services</a>
+        <a href="feedback.html">📝 Feedback</a>
+    </header>
+    <h1>📞 Contact Us</h1>
+    <div class="contact-container">
+        <!-- Contact Form -->
+        <div class="contact-form">
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <textarea id="message" rows="4" placeholder="Your Message"></textarea>
+                <button type="submit">📤 Send Message</button>
+            </form>
+        </div>
+        <!-- Business Info -->
+        <div class="contact-info">
+            <h2>📍 Our Office</h2>
+            <p><strong>Address:</strong> University Of Venda Cafeteria, Thohoyandou, Limpopo, South Africa</p>
+            <p><strong>Phone:</strong> +27 12 345 6789</p>
+            <p><strong>Email:</strong> info@techiteasycafe.co.za</p>
+            <div class="socials">
+                <h3>🔗 Follow Us</h3>
+                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174848.png" alt="Facebook"></a>
+                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="Twitter"></a>
+                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"></a>
+                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn"></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById("contactForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const contactData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                message: document.getElementById("message").value,
+                submittedAt: new Date().toLocaleString()
+            };
+            let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts.push(contactData);
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+            alert("✅ Message sent successfully!");
+            document.getElementById("contactForm").reset();
+        });
+    </script>
+</body>
+</html>

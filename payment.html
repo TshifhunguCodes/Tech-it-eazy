@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service Payment</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background-image: url('background.jpeg');
+            margin: 0;
+            padding: 0;
+            color: #413939;
+        }
+        header {
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        main {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #f1f1f1;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #552900;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', sans-serif;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #FFA500, #552900);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .summary-box {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .back-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Payment Page</h1>
+    </header>
+    <main>
+        <button class="back-btn" onclick="window.history.back()">⬅ Back</button>
+        <h2>Complete Your Payment</h2>
+        <div class="summary-box" id="orderSummary">
+            <!-- Order summary will load here -->
+        </div>
+        <form id="paymentForm">
+            <label for="paymentMethod">Select Payment Method:</label>
+            <select id="paymentMethod" required>
+                <option value="">-- Select --</option>
+                <option value="Card">💳 Card Payment</option>
+                <option value="EFT">🏦 Bank Transfer (EFT)</option>
+                <option value="Cash">💵 Cash on Collection/Delivery</option>
+            </select>
+            <label for="transactionRef">Transaction Reference (if any):</label>
+            <input type="text" id="transactionRef" placeholder="Enter transaction reference" />
+            <button type="submit">📤 Confirm Payment</button>
+        </form>
+    </main>
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (!currentUser) {
+            alert("Please log in first.");
+            window.location.href = "customerLogin.html";
+        }
+        
+        // Get the last submitted request
+        let serviceRequests = JSON.parse(localStorage.getItem("serviceRequests")) || [];
+        let lastRequest = serviceRequests[serviceRequests.length - 1];
+        const summaryDiv = document.getElementById("orderSummary");
+        if (lastRequest) {
+            summaryDiv.innerHTML = `
+                <h3>Order Summary</h3>
+                <p><strong>User:</strong> ${lastRequest.username}</p>
+                <p><strong>Service:</strong> ${lastRequest.service}</p>
+                <p><strong>Requested At:</strong> ${lastRequest.requestedAt}</p>
+                <p><strong>Contact:</strong> ${lastRequest.contact || "-"}</p>
+            `;
+        } else {
+            summaryDiv.innerHTML = "<p>No recent request found.</p>";
+        }
+        
+        const paymentForm = document.getElementById("paymentForm");
+        paymentForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const paymentMethod = document.getElementById("paymentMethod").value;
+            const transactionRef = document.getElementById("transactionRef").value;
+            
+            // Save payment details
+            const paymentDetails = {
+                user: currentUser.username,
+                service: lastRequest ? lastRequest.service : "Unknown",
+                paymentMethod: paymentMethod,
+                transactionRef: transactionRef,
+                paidAt: new Date().toLocaleString(),
+            };
+            let payments = JSON.parse(localStorage.getItem("payments")) || [];
+            payments.push(paymentDetails);
+            localStorage.setItem("payments", JSON.stringify(payments));
+            
+            // Update last service request with payment method
+            if (lastRequest) {
+                lastRequest.paymentMethod = paymentMethod;
+                lastRequest.transactionRef = transactionRef;
+                serviceRequests[serviceRequests.length - 1] = lastRequest;
+                localStorage.setItem("serviceRequests", JSON.stringify(serviceRequests));
+            }
+            
+            alert("✅ Payment recorded successfully!");
+            window.location.href = "final.html";
+        });
+    </script>
+</body>
+</html>

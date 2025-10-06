@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - TakeItEasy Internet Cafe</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background.jpeg');
+            color: #413939;
+        }
+        header {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            padding: 20px;
+            text-align: right;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        header a:hover {
+            color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #552900;
+            font-size: 36px;
+        }
+        .services {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f1f1f1;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .services ul {
+            line-height: 2.5;
+            list-style: none;
+            padding: 0;
+        }
+        .services li {
+            font-size: 20px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .services li::before {
+            content: "🔹";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html">🏠 Home</a>
+        <a href="customerLogin.html">🔑 Login/SignUp</a>
+        <a href="Contact.html">📞 Contact</a>
+        <a href="Feedback.html">📝 Feedback</a>
+    </header>
+    <h1>🌟 Our Services</h1>
+    <div class="services">
+        <ul>
+            <li>📄 Printing documents, posters, and CVs</li>
+            <li>🎓 Assisting Grade 12 learners with university and college applications</li>
+            <li>💼 Helping individuals apply for jobs online</li>
+            <li>🌐 Website development for businesses</li>
+            <li>🛠 Improving and redesigning existing websites</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Delivery App</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Comic Sans MS', sans-serif;
+            background-image: url('background.jpeg');
+            color: #413939;
+        }
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+        header img {
+            height: 50px;
+            width: auto;
+            border-radius: 10px;
+        }
+        nav {
+            display: flex;
+            gap: 25px;
+        }
+        nav a {
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            color: #552900;
+            font-size: 48px;
+            font-weight: 700;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px 20px 10px;
+            line-height: 1.2;
+        }
+        /* Challenge Section */
+        .challenge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+            flex-wrap: wrap;
+        }
+        .challenge img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .challenge img:hover {
+            transform: scale(1.02);
+        }
+        .challenge-text {
+            max-width: 600px;
+            text-align: left;
+            background: #f1f1f1;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chat-bubble {
+            background: #dcf8c6;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            display: inline-block;
+        }
+        .chat-bubble.sender {
+            background: #fff;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <img src="sidepic.webp" alt="TechItEasy Logo">
+        <nav>
+            <a href="customerLogin.html">🔑 Login/SignUp</a>
+            <a href="Services.html">💻 Services</a>
+            <a href="Contact.html">📞 Contact</a>
+            <a href="Feedback.html">📝 Feedback</a>
+        </nav>
+    </header>
+    <!-- SECTION TITLE -->
+    <h1 class="section-title">🌐 TechItEasy Internet Cafe</h1>
+    <!-- CHALLENGE SECTION -->
+    <div class="challenge">
+        <!-- Chart image -->
+        <img src="OIP.webp" alt="TakeItEasy">
+        <!-- Text -->
+        <div class="challenge-text">
+            <div class="chat-container">
+                <div class="chat-bubble">Hey! 🚀 Welcome to TechItEasy Internet Cafe 🌟</div>
+                <div class="chat-bubble sender">Hi! 😊 What do you guys do?</div>
+                <div class="chat-bubble">We transform your ideas into reality 💡 with exciting services 🎉! 🎉</div>
+                <div class="chat-bubble sender">Cool! 😎 What kind of services?</div>
+                <div class="chat-bubble">📄 We print crisp documents! 🖼 We design eye-catching posters! ✅</div>
+                <div class="chat-bubble">👨‍🎓 We also help Grade 12 learners apply to top universities 🏛 and colleges 🎓! 📚</div>
+                <div class="chat-bubble sender">That’s awesome! 🎉 What about jobs?</div>
+                <div class="chat-bubble">💼 We have a smart matching system 🔄 that connects you 🔗 with your dream job 💼 in a snap ⚡!</div>
+                <div class="chat-bubble">💥 Plus, we improve 🛠 or create 🌐 stunning new websites 🌟 for businesses 👨‍💼!</div>
+                <div class="chat-bubble sender">Sounds amazing! 😍 How do I get started?</div>
+                <div class="chat-bubble">🌟 Just join us today 🚀 and unlock 🔓 a world 🌍 of digital possibilities 🔮!</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

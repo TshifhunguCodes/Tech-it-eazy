@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback - TakeItEasy Internet Cafe</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('background.jpeg');
+            color: #413939;
+        }
+        header {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            padding: 20px;
+            text-align: right;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        header a:hover {
+            color: #f0f0f0;
+            transform: scale(1.05);
+        }
+        h1 {
+            text-align: center;
+            margin: 30px 0;
+            color: #552900;
+        }
+        .feedback {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f1f1f1;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .feedback input, .feedback textarea {
+            font-family: 'Comic Sans MS', sans-serif;
+            display: block;
+            width: 95%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .feedback textarea {
+            resize: none;
+        }
+        .feedback button {
+            font-family: 'Comic Sans MS', sans-serif;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #552900, #FFA500);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 10px;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .feedback button:hover {
+            background: linear-gradient(45deg, #FFA500, #552900);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html">🏠 Home</a>
+        <a href="customerLogin.html">🔑 Login/SignUp</a>
+        <a href="Services.html">💻 Services</a>
+        <a href="Contact.html">📞 Contact</a>
+    </header>
+    <h1>📝 Feedback</h1>
+    <div class="feedback">
+        <form id="feedbackForm">
+            <input type="text" id="name" placeholder="Your Name" required />
+            <input type="email" id="email" placeholder="Your Email" required />
+            <textarea id="feedback" rows="5" placeholder="Your Feedback"></textarea>
+            <button type="submit">📤 Submit Feedback</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const feedbackData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                feedback: document.getElementById("feedback").value,
+                submittedAt: new Date().toLocaleString()
+            };
+            let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+            feedbacks.push(feedbackData);
+            localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+            alert("✅ Feedback submitted successfully!");
+            document.getElementById("feedbackForm").reset();
+        });
+    </script>
+</body>
+</html>
