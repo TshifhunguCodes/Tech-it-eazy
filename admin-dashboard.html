@@ -1,191 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #f9f9f9;
-        color: #333;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <!-- Supabase will be imported as ESM inside the module script below -->
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
+    /* Sidebar styling */
+    nav.sidebar {
+      width: 240px;
+      background: #1f2a38;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    nav.sidebar h2 { text-align: center; margin-bottom: 20px; }
+    nav.sidebar a {
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    nav.sidebar a:hover { background: #2c3e50; }
+    nav.sidebar a.active { background: #3498db; }
+
+    /* Main content */
+    main { flex: 1; padding: 20px; background: #f4f7fa; overflow-y: auto; }
+    h1 { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #3498db; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    tr:hover { background: #e0f0ff; }
+    .table-title { margin-top: 30px; font-size: 20px; font-weight: bold; color: #2c3e50; }
+
+    /* Loader */
+    .loader { margin: 20px 0; font-style: italic; color: #555; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="index.html" style="border-top:1px solid rgba(255,255,255,0.06);">Home</a>
+    <a data-table="dashboard" class="active">Dashboard</a>
+    <a data-table="customer">Customer & Feedback</a>
+    <a data-table="services">Service Requests</a>
+  </nav>
+
+
+  <!-- Main Content -->
+  <main>
+    <h1 id="tableTitle">Dashboard</h1>
+    <div id="tableContainer"></div>
+  </main>
+
+  <script type="module">
+    // Import the ESM build of Supabase and Chart.js
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  import { Chart, registerables } from 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/+esm'
+  // register built-in controllers/elements so Chart can be constructed
+  Chart.register(...registerables)
+
+    // ========================
+    // 1️⃣ Supabase configuration
+    // ========================
+    const supabaseUrl = 'https://gtbqbfqvpzdshswaivne.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0YnFiZnF2cHpkc2hzd2Fpdm5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzUxOTcsImV4cCI6MjA3NTI1MTE5N30.0IaZbc30TpwNs6hzKo4LC6XcchzAYk222yUh2PZEmuY'; // replace with your anon key
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // ========================
+    // 2️⃣ Sidebar table mapping
+    // ========================
+    const tableGroups = {
+      dashboard: ['Customer', 'Feedback', 'CVTable', 'JobApplication', 'PrintingTable', 'UniApplication', 'WebsiteInfo'],
+      customer: ['Customer', 'Feedback'],
+      services: ['CVTable', 'JobApplication', 'PrintingTable', 'UniApplication', 'WebsiteInfo']
+    };
+
+    const tableContainer = document.getElementById('tableContainer');
+    const tableTitle = document.getElementById('tableTitle');
+
+    // ========================
+    // 3️⃣ Sidebar click logic
+    // ========================
+    document.querySelectorAll('nav.sidebar a').forEach(link => {
+      link.addEventListener('click', async () => {
+        // Highlight active link
+        document.querySelectorAll('nav.sidebar a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+
+        const tableKey = link.dataset.table;
+        tableTitle.innerText = tableKey.charAt(0).toUpperCase() + tableKey.slice(1);
+        // If dashboard is selected, render the dashboard summary instead of tables
+        if (tableKey === 'dashboard') {
+          renderDashboard();
+        } else {
+          await loadTables(tableGroups[tableKey]);
+        }
+      });
+    });
+
+    // ========================
+    // 4️⃣ Load tables from Supabase
+    // ========================
+    async function loadTables(tables) {
+      tableContainer.innerHTML = '<div class="loader">Loading tables...</div>';
+
+      for (const table of tables) {
+        // Fetch all rows from Supabase table
+        const { data, error } = await supabase.from(table).select('*').order('id', { ascending: true });
+        if (error) {
+          console.error(`Error loading ${table}:`, error);
+          continue;
+        }
+
+        const tbl = document.createElement('table');
+
+        // Add table header (columns)
+        if (data.length > 0) {
+          const headerRow = document.createElement('tr');
+          Object.keys(data[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.innerText = key; // <-- Column names from Supabase
+            headerRow.appendChild(th);
+          });
+          tbl.appendChild(headerRow);
+
+          // Add table rows
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            Object.values(row).forEach(val => {
+              const td = document.createElement('td');
+              td.innerText = val; // <-- Data from Supabase
+              tr.appendChild(td);
+            });
+            tbl.appendChild(tr);
+          });
+        } else {
+          // No data placeholder
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.colSpan = 10; // adjust if table has more columns
+          td.innerText = `No records in ${table}`;
+          tr.appendChild(td);
+          tbl.appendChild(tr);
+        }
+
+        // Add table title
+        const title = document.createElement('div');
+        title.className = 'table-title';
+        title.innerText = table; // <-- Supabase table name
+        tableContainer.appendChild(title);
+        tableContainer.appendChild(tbl);
+      }
+    }
+
+    // ========================
+    // Dashboard rendering (no tables)
+    // ========================
+    function renderDashboard() {
+      tableContainer.innerHTML = '';
+
+      const headerRow = document.createElement('div');
+      headerRow.style.display = 'flex';
+      headerRow.style.justifyContent = 'space-between';
+      headerRow.style.alignItems = 'center';
+      headerRow.style.marginBottom = '12px';
+
+      const title = document.createElement('div');
+      title.innerText = 'Overview';
+      title.style.fontSize = '18px';
+      title.style.fontWeight = '700';
+
+      const refreshBtn = document.createElement('button');
+      refreshBtn.innerText = 'Refresh';
+      refreshBtn.style.padding = '8px 12px';
+      refreshBtn.style.border = 'none';
+      refreshBtn.style.background = '#3498db';
+      refreshBtn.style.color = 'white';
+      refreshBtn.style.borderRadius = '6px';
+      refreshBtn.style.cursor = 'pointer';
+
+      headerRow.appendChild(title);
+      headerRow.appendChild(refreshBtn);
+      tableContainer.appendChild(headerRow);
+
+      const chartsWrapper = document.createElement('div');
+      chartsWrapper.style.display = 'grid';
+      chartsWrapper.style.gridTemplateColumns = '1fr 1fr';
+      chartsWrapper.style.gap = '16px';
+
+      // Card + canvas for counts bar chart
+      const countsCard = document.createElement('div');
+      countsCard.style.background = 'white';
+      countsCard.style.padding = '12px';
+      countsCard.style.borderRadius = '8px';
+      countsCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.06)';
+      const countsCanvas = document.createElement('canvas');
+      countsCanvas.id = 'countsChart';
+      countsCard.appendChild(countsCanvas);
+
+      // Card + canvas for activity line chart
+      const activityCard = document.createElement('div');
+      activityCard.style.background = 'white';
+      activityCard.style.padding = '12px';
+      activityCard.style.borderRadius = '8px';
+      activityCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.06)';
+      const activityCanvas = document.createElement('canvas');
+      activityCanvas.id = 'activityChart';
+      activityCard.appendChild(activityCanvas);
+
+      chartsWrapper.appendChild(countsCard);
+      chartsWrapper.appendChild(activityCard);
+      tableContainer.appendChild(chartsWrapper);
+
+      // Insights section under charts
+      const insightsSection = document.createElement('div');
+      insightsSection.style.marginTop = '18px';
+
+      const insightsHeader = document.createElement('div');
+      insightsHeader.style.display = 'flex';
+      insightsHeader.style.justifyContent = 'space-between';
+      insightsHeader.style.alignItems = 'center';
+      const ih = document.createElement('div');
+      ih.innerText = 'Insights';
+      ih.style.fontSize = '16px';
+      ih.style.fontWeight = '700';
+      insightsHeader.appendChild(ih);
+
+      insightsSection.appendChild(insightsHeader);
+
+      const insightsWrapper = document.createElement('div');
+      insightsWrapper.style.display = 'grid';
+      insightsWrapper.style.gridTemplateColumns = '2fr 1fr';
+      insightsWrapper.style.gap = '16px';
+      insightsWrapper.style.marginTop = '12px';
+
+      // Left column: pie chart card
+      const pieCard = document.createElement('div');
+      pieCard.style.background = 'white';
+      pieCard.style.padding = '12px';
+      pieCard.style.borderRadius = '8px';
+      pieCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.06)';
+      const pieCanvas = document.createElement('canvas');
+      pieCanvas.id = 'pieChart';
+      pieCanvas.style.maxHeight = '240px';
+      pieCard.appendChild(pieCanvas);
+
+      // Right column: info cards
+      const infoColumn = document.createElement('div');
+      infoColumn.style.display = 'grid';
+      infoColumn.style.gridTemplateRows = 'repeat(3, auto)';
+      infoColumn.style.gap = '12px';
+
+      const infos = [
+        { title: 'Top Service', value: 'Website' },
+        { title: 'Pending Applications', value: '3' },
+        { title: 'Unread Feedbacks', value: '5' }
+      ];
+
+      infos.forEach(i => {
+        const card = document.createElement('div');
+        card.style.background = '#fff';
+        card.style.padding = '12px';
+        card.style.borderRadius = '6px';
+        card.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
+        const t = document.createElement('div');
+        t.style.fontSize = '13px';
+        t.style.color = '#666';
+        t.innerText = i.title;
+        const v = document.createElement('div');
+        v.style.fontSize = '20px';
+        v.style.fontWeight = '700';
+        v.innerText = i.value;
+        card.appendChild(t);
+        card.appendChild(v);
+        infoColumn.appendChild(card);
+      });
+
+      insightsWrapper.appendChild(pieCard);
+      insightsWrapper.appendChild(infoColumn);
+      insightsSection.appendChild(insightsWrapper);
+      tableContainer.appendChild(insightsSection);
+
+      // helper to query counts from Supabase for tables in `tableGroups.dashboard`
+      async function fetchCounts() {
+        const labels = ['Customer', 'Feedback', 'CVTable', 'JobApplication', 'PrintingTable', 'UniApplication', 'WebsiteInfo'];
+        const counts = [];
+        for (const t of labels) {
+          try {
+            const { count, error } = await supabase.from(t).select('*', { count: 'exact', head: true });
+            if (error) {
+              console.warn('Count error for', t, error);
+              counts.push(0);
+            } else {
+              counts.push(count ?? 0);
+            }
+          } catch (e) {
+            console.warn('Fetch count failed for', t, e);
+            counts.push(0);
+          }
+        }
+        return { labels, counts };
       }
 
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 15px 40px;
-        border-bottom: 2px solid #f0f0f0;
-        background-color: #ffffff;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 0;
-        z-index: 500;
+      // Draw charts with data (or fallback sample data)
+      let countsChart = null;
+      let activityChart = null;
+      let pieChart = null;
+
+      async function draw() {
+        const { labels, counts } = await fetchCounts();
+
+        // counts bar chart
+        const ctx1 = countsCanvas.getContext('2d');
+        if (countsChart) countsChart.destroy();
+        countsChart = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{ label: 'Records', data: counts, backgroundColor: '#3498db' }]
+          },
+          options: { responsive: true }
+        });
+
+        // activity line chart — sample monthly activity using counts as recent values
+        const ctx2 = activityCanvas.getContext('2d');
+        if (activityChart) activityChart.destroy();
+        activityChart = new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            datasets: [{ label: 'Activity (sample)', data: [12,19,8,15,22,9], borderColor: '#2ecc71', tension: 0.3 }]
+          },
+          options: { responsive: true }
+        });
+
+        // pie chart for proportional distribution of records
+        const pieCanvas = document.getElementById('pieChart');
+        if (pieCanvas) {
+          const ctx3 = pieCanvas.getContext('2d');
+          if (pieChart) pieChart.destroy();
+          pieChart = new Chart(ctx3, {
+            type: 'pie',
+            data: {
+              labels,
+              datasets: [{ data: counts, backgroundColor: ['#3498db','#9b59b6','#f1c40f','#2ecc71','#e67e22','#e74c3c','#95a5a6'] }]
+            },
+            options: { responsive: true }
+          });
+        }
       }
 
-      header h1 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: bold;
-        color: #2c3e50;
-      }
+      // attach refresh
+      refreshBtn.addEventListener('click', async () => {
+        refreshBtn.disabled = true;
+        refreshBtn.innerText = 'Refreshing...';
+        await draw();
+        refreshBtn.innerText = 'Refresh';
+        refreshBtn.disabled = false;
+      });
 
-      .header-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+      // initial draw (best-effort)
+      draw().catch(err => {
+        console.warn('Error drawing dashboard charts', err);
+      });
+    }
 
-      .header-right a {
-        text-decoration: none;
-        background-color: #3498db;
-        color: white;
-        padding: 8px 15px;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-      }
 
-      .header-right a:hover {
-        background-color: #2980b9;
-      }
+    // ========================
+    // 5️⃣ Initial page load
+    // ========================
+    // Show dashboard summary on initial load instead of tables
+    renderDashboard();
+  </script>
 
-      header button {
-        background: #e74c3c;
-        border: none;
-        padding: 8px 15px;
-        color: white;
-        font-weight: bold;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      header button:hover {
-        background: #c0392b;
-      }
-
-      main {
-        max-width: 1200px;
-        margin: 30px auto;
-        padding: 20px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
-      }
-
-      h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #2c3e50;
-      }
-
-      .filter {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      select {
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-      }
-
-      th {
-        background: #3498db;
-        color: white;
-      }
-
-      tr:nth-child(even) {
-        background: #f9f9f9;
-      }
-
-      .download-btn {
-        background-color: #2ecc71;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .download-btn:hover {
-        background-color: #27ae60;
-      }
-
-      td {
-        word-break: break-word;
-      }
-
-      .details {
-        white-space: pre-wrap;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Admin Dashboard</h1>
-      <div class="header-right">
-        <a href="index.html">🏠 Home</a>
-        <button id="logoutBtn">Logout</button>
-      </div>
-    </header>
-
-    <main>
-      <h2>Service Requests</h2>
-
-      <div class="filter">
-        <label for="serviceFilter">Filter by Service:</label>
-        <select id="serviceFilter">
-          <option value="all">All</option>
-          <option value="CV Poster">CV Poster</option>
-          <option value="Printing">Printing</option>
-          <option value="Website Assistance">Website Assistance</option>
-          <option value="University Applications">
-            University Applications
-          </option>
-          <option value="Job Search Support">Job Search Support</option>
-        </select>
-      </div>
-
-      <table id="requestsTable">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Service</th>
-            <th>Document</th>
-            <th>Requested Time</th>
-            <th>Details</th>
-            <th>Contact</th>
-            <th>Receiving Method</th>
-            <th>Payment Method</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Requests populated dynamically -->
-        </tbody>
-      </table>
-    </main>
-
-    <script src="admin-dashboard.js"></script>
-  </body>
+</body>
 </html>

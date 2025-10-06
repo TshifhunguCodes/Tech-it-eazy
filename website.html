@@ -1,100 +1,4 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Assistance</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', sans-serif;
-            background-image: url('background.jpeg');
-            margin: 0;
-            padding: 0;
-            color: #413939;
-        }
-        header {
-            background: linear-gradient(45deg, #552900, #FFA500);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid #f0f0f0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        main {
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 30px;
-            background: #f1f1f1;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        form input, form select, form textarea, form button {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-family: 'Comic Sans MS', sans-serif;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        form button {
-            background: linear-gradient(45deg, #552900, #FFA500);
-            color: white;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        form button:hover {
-            background: linear-gradient(45deg, #FFA500, #552900);
-            transform: scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .back-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: 0.3s;
-        }
-        .back-btn:hover {
-            opacity: 0.9;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Website Assistance Request</h1>
-    </header>
-    <main>
-        <button class="back-btn" onclick="window.history.back()">⬅ Back</button>
-        <form id="serviceForm" data-service="Website Assistance">
-            <input type="text" id="websiteName" placeholder="Website Name" required>
-            <input type="text" id="websiteType" placeholder="Type of Website (Portfolio, E-commerce, etc.)" required>
-            <textarea id="designPref" placeholder="Design Preferences" required></textarea>
-            <label for="cvFile">📄 Upload Any Reference Document:</label>
-            <input type="file" id="cvFile" accept=".pdf,.doc,.docx,.zip">
-            <label for="receivingMethod">Receiving Method:</label>
-            <select id="receivingMethod" required>
-                <option value="">-- Select --</option>
-                <option value="Online">Online</option>
-                <option value="Contact">Contact</option>
-            </select>
-            <input type="text" id="contact" placeholder="Your Contact number" required>
-            <button type="submit">📤 Submit Website Assistance Request</button>
-        </form>
-    </main>
-
-        <script type="module">
 
     // supabase connection details
   const { createClient } = supabase;
@@ -102,37 +6,197 @@
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0YnFiZnF2cHpkc2hzd2Fpdm5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzUxOTcsImV4cCI6MjA3NTI1MTE5N30.0IaZbc30TpwNs6hzKo4LC6XcchzAYk222yUh2PZEmuY';
   const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-  const form = document.getElementById('serviceForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
+  /* Sidebar */
+  nav.sidebar {
+    width: 240px;
+    background: #1f2a38;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+  }
+  nav.sidebar h2 { text-align: center; margin-bottom: 20px; }
+  nav.sidebar a {
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  nav.sidebar a:hover { background: #2c3e50; }
+  /* Main content */
+  main { flex: 1; padding: 20px; background: #f4f7fa; overflow-y: auto; }
+  h1 { margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+  th { background: #3498db; color: white; }
+  tr:nth-child(even) { background: #f9f9f9; }
+  tr:hover { background: #e0f0ff; }
+  .table-title { margin-top: 30px; font-size: 20px; font-weight: bold; color: #2c3e50; }
+  canvas { max-width: 600px; margin: 20px auto; display: block; }
+</style>
+</head>
+<body>
 
-      // data which is going to be stored
-    const webName = document.getElementById("websiteName").value.trim();
-    const websiteType = document.getElementById("websiteType").value.trim();
-    const designPref = document.getElementById("designPref").value.trim();
-    const phoneNumber = document.getElementById("contact").value;
-   
+<!-- Sidebar -->
+<nav class="sidebar">
+  <h2>Admin Panel</h2>
+  <a data-view="dashboard">Dashboard</a>
+  <a data-view="customer">Customer & Feedback</a>
+  <a data-view="services">Service Requests</a>
+</nav>
 
-    try {
-      const { data, error } = await supabaseClient
-        .from('WebsiteInfo')
-        .insert([
-          { WebName: webName, TypeOfWebsite: websiteType, DesignPref: designPref, cellNo: phoneNumber }
-        ]);
+<!-- Main Content -->
+<main>
+  <h1 id="mainTitle">Dashboard</h1>
+  <div id="contentArea"></div>
+</main>
 
-      if (error) {
-        alert('Error: ' + error.message);
+<script type="module">
+  // ========================
+  // 1️⃣ Supabase initialization
+  // ========================
+  const { createClient } = supabase;
+  const supabaseUrl = 'https://gtbqbfqvpzdshswaivne.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0YnFiZnF2cHpkc2hzd2Fpdm5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk2NzUxOTcsImV4cCI6MjA3NTI1MTE5N30.0IaZbc30TpwNs6hzKo4LC6XcchzAYk222yUh2PZEmuY'; // replace with your anon key
+  const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+  const contentArea = document.getElementById('contentArea');
+  const mainTitle = document.getElementById('mainTitle');
+
+  // ========================
+  // 2️⃣ Define table groups
+  // ========================
+  const tableGroups = {
+    dashboard: [], // will show charts instead
+    customer: ['Customer', 'Feedback'],
+    services: ['CVTable', 'JobApplication', 'PrintingTable', 'UniApplication', 'WebsiteInfo']
+  };
+
+  // ========================
+  // 3️⃣ Sidebar click logic
+  // ========================
+  document.querySelectorAll('nav.sidebar a').forEach(link => {
+    link.addEventListener('click', async () => {
+      const view = link.dataset.view;
+      mainTitle.innerText = view.charAt(0).toUpperCase() + view.slice(1);
+      if (view === 'dashboard') {
+        await showDashboard();
       } else {
-        alert('Request successful!');
-       
+        await loadTables(tableGroups[view]);
       }
-    } catch (err) {
-      console.error(err);
-      alert('Unexpected error occurred.');
-    }
+    });
   });
-    </script>
 
-    
+  // ========================
+  // 4️⃣ Load tables from Supabase
+  // ========================
+  async function loadTables(tables) {
+    contentArea.innerHTML = ''; // clear previous content
+
+    for (const table of tables) {
+      const { data, error } = await supabaseClient.from(table).select('*').order('id', { ascending: true });
+      if (error) { console.error(`Error loading ${table}:`, error); continue; }
+
+      const tbl = document.createElement('table');
+
+      // Add table header
+      if (data.length > 0) {
+        const headerRow = document.createElement('tr');
+        Object.keys(data[0]).forEach(key => {
+          const th = document.createElement('th');
+          th.innerText = key; // <-- Column names
+          headerRow.appendChild(th);
+        });
+        tbl.appendChild(headerRow);
+
+        // Add table rows
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.innerText = val ?? ''; // null-safe
+            tr.appendChild(td);
+          });
+          tbl.appendChild(tr);
+        });
+      } else {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 10; // adjust as needed
+        td.innerText = `No records in ${table}`;
+        tr.appendChild(td);
+        tbl.appendChild(tr);
+      }
+
+      // Table title
+      const title = document.createElement('div');
+      title.className = 'table-title';
+      title.innerText = table;
+      contentArea.appendChild(title);
+      contentArea.appendChild(tbl);
+    }
+  }
+
+  // ========================
+  // 5️⃣ Dashboard charts
+  // ========================
+  async function showDashboard() {
+    contentArea.innerHTML = '';
+
+    // Count total records for each table
+    const counts = {};
+    const tables = ['Customer', 'Feedback', 'CVTable', 'JobApplication', 'PrintingTable', 'UniApplication', 'WebsiteInfo'];
+    for (const table of tables) {
+      const { data, error } = await supabaseClient.from(table).select('id', { count: 'exact' });
+      counts[table] = error ? 0 : data.length;
+    }
+
+    // Display chart
+    const canvas = document.createElement('canvas');
+    contentArea.appendChild(canvas);
+
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: Object.keys(counts),
+        datasets: [{
+          label: 'Number of Records',
+          data: Object.values(counts),
+          backgroundColor: [
+            '#3498db','#2ecc71','#e67e22','#9b59b6','#e74c3c','#1abc9c','#f1c40f'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Dashboard Overview' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // ========================
+  // 6️⃣ Initial load
+  // ========================
+  showDashboard();
+
+</script>
 </body>
 </html>
